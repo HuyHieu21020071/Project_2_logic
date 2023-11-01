@@ -48,7 +48,7 @@ class PlanningProblem:
         Only used in problems that use ghosts (FoodGhostPlanningProblem)
         """
         util.raiseNotDefined()
-        
+
     def getGoalState(self):
         """
         Returns goal state for problem. Note only defined for problems that have
@@ -74,7 +74,15 @@ def sentence1():
     (not A) or (not B) or C
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    A = logic.Expr('A')
+    B = logic.Expr('B')
+    C = logic.Expr('C')
+
+    c1 = logic.disjoin(A, B)
+    c2 = ~A % (~B | C)
+    c3 = logic.disjoin(~A, ~B, C)
+    return logic.conjoin(c1, c2, c3)
 
 def sentence2():
     """Returns a logic.Expr instance that encodes that the following expressions are all true.
@@ -85,7 +93,17 @@ def sentence2():
     (not D) implies C
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    A = logic.Expr('A')
+    B = logic.Expr('B')
+    C = logic.Expr('C')
+    D = logic.Expr('D')
+
+    c1 = C % (B | D)
+    c2 = A >> (~B & ~D)
+    c3 = ~(B & ~C) >> A
+    c4 = ~D >> C
+    return logic.conjoin(c1, c2, c3, c4)
 
 def sentence3():
     """Using the symbols WumpusAlive[1], WumpusAlive[0], WumpusBorn[0], and WumpusKilled[0],
@@ -100,7 +118,14 @@ def sentence3():
     The Wumpus is born at time 0.
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    a = logic.PropSymbolExpr("WumpusAlive[1]")
+    b = logic.PropSymbolExpr("WumpusAlive[0]")
+    c = logic.PropSymbolExpr("WumpusBorn[0]")
+    d = logic.PropSymbolExpr("WumpusKilled[0]")
+    c1 = a % ((b & ~d) | (~b & c))
+    c2 = ~(b & c)
+    c3 = c
+    return logic.conjoin(c1,c2,c3)
 
 def modelToString(model):
     """Converts the model to a string for printing purposes. The keys of a model are 
@@ -111,7 +136,7 @@ def modelToString(model):
     a call to logic.pycoSAT.
     """
     if model == False:
-        return "False" 
+        return "False"
     else:
         # Dictionary
         modelList = sorted(model.items(), key=lambda item: str(item[0]))
@@ -122,7 +147,16 @@ def findModel(sentence):
     model if one exists. Otherwise, returns False.
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    if logic.is_valid_cnf(sentence) == False:
+        sentence = logic.to_cnf(sentence)
+
+    isModel = logic.pycoSAT(sentence)
+
+    if str(isModel) == "FALSE":
+        return False
+
+    return isModel
+
 
 def atLeastOne(literals):
     """
@@ -206,7 +240,7 @@ def positionLogicPlan(problem):
     walls_list = walls.asList()
     x0, y0 = problem.startState
     xg, yg = problem.goal
-    
+
     "*** YOUR CODE HERE ***"
     util.raiseNotDefined()
 
@@ -233,4 +267,4 @@ flp = foodLogicPlan
 
 # Sometimes the logic module uses pretty deep recursion on long expressions
 sys.setrecursionlimit(100000)
-    
+
