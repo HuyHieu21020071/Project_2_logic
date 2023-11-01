@@ -178,7 +178,7 @@ def atLeastOne(literals):
     True
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    return logic.disjoin(literals)
 
 
 def atMostOne(literals):
@@ -188,7 +188,9 @@ def atMostOne(literals):
     the expressions in the list is true.
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    conjunctions = [logic.disjoin(~literal, ~inner_literal) for literal in literals for inner_literal in literals if literal != inner_literal]
+    return logic.conjoin(conjunctions)
 
 
 def exactlyOne(literals):
@@ -198,7 +200,21 @@ def exactlyOne(literals):
     the expressions in the list is true.
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    conjunctions = []
+    exactly_one_must_be_true_list = []
+
+    for literal in literals:
+        not_literal = ~literal
+        exactly_one_must_be_true_list.append(literal)
+
+        other_literals = [~inner_literal for inner_literal in literals if literal != inner_literal]
+        disjunctions = [logic.disjoin(not_literal, other_literal) for other_literal in other_literals]
+        conjunctions.extend(disjunctions)
+
+    exactly_one_must_be_true = logic.disjoin(exactly_one_must_be_true_list)
+    conjunctions.append(exactly_one_must_be_true)
+
+    return logic.conjoin(conjunctions)
 
 
 def extractActionSequence(model, actions):
