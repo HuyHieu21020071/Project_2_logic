@@ -230,7 +230,22 @@ def extractActionSequence(model, actions):
     ['West', 'South', 'North']
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    models = []
+    final = []
+    # print "hur"
+    for i in model.keys():
+        # print "wo"
+        if model[i]:
+            a = logic.parseExpr(i)
+            if a[0] in actions:
+                models.append(a)
+    p = sorted(models, key=lambda mod: int(mod[1]))
+    # print "hi"
+    for m in p:
+        final.append(m[0])
+
+    # print "returning"
+    return final
 
 
 def pacmanSuccessorStateAxioms(x, y, t, walls_grid):
@@ -242,7 +257,38 @@ def pacmanSuccessorStateAxioms(x, y, t, walls_grid):
     Note that STOP is not an available action.
     """
     "*** YOUR CODE HERE ***"
-    return logic.Expr('A') # Replace this with your expression
+    current = logic.PropSymbolExpr(pacman_str, x, y, t)
+
+    neighbors = []
+
+    if walls_grid[x-1][y] == False:
+        prev_position = logic.PropSymbolExpr(pacman_str, x-1, y, t-1)
+        action = logic.PropSymbolExpr('East', t-1)
+        state = logic.conjoin(prev_position, action)
+        neighbors.append(state)
+
+    if walls_grid[x+1][y] == False:
+        prev_position = logic.PropSymbolExpr(pacman_str, x+1, y, t-1)
+        action = logic.PropSymbolExpr('West', t-1)
+        state = logic.conjoin(prev_position, action)
+        neighbors.append(state)
+
+    if walls_grid[x][y-1] == False:
+        prev_position = logic.PropSymbolExpr(pacman_str, x, y-1, t-1)
+        action = logic.PropSymbolExpr('North', t-1)
+        state = logic.conjoin(prev_position, action)
+        neighbors.append(state)
+
+    if walls_grid[x][y+1] == False:
+        prev_position = logic.PropSymbolExpr(pacman_str, x, y+1, t-1)
+        action = logic.PropSymbolExpr('South', t-1)
+        state = logic.conjoin(prev_position, action)
+        neighbors.append(state)
+
+    prev_states = atLeastOne(neighbors)
+    final_axiom = current % prev_states
+    # print final_axiom
+    return final_axiom
 
 
 def positionLogicPlan(problem):
